@@ -12,7 +12,13 @@ from apps.slack.models.conversation import Conversation
 
 
 class BaseOwaspAdminMixin:
-    """Base mixin for OWASP admin classes providing common patterns."""
+    """
+    Base mixin for OWASP admin classes.
+
+    Provides common configuration patterns—such as default list_display,
+    list_filter, and search_fields—so individual ModelAdmin classes can avoid
+    duplicated boilerplate.
+    """
 
     # Common configuration patterns.
     list_display_field_names = (
@@ -26,7 +32,16 @@ class BaseOwaspAdminMixin:
     )
 
     def get_base_list_display(self, *additional_fields):
-        """Get base list display with additional fields."""
+        """
+        Construct a standard list_display value with optional extra fields.
+
+        Args:
+            additional_fields (str): Additional field names to include.
+
+        Returns:
+            tuple[str]: A tuple combining name (if present), custom fields, and
+            common timestamp fields.
+        """
         return tuple(
             ("name",) if hasattr(self.model, "name") else (),
             *additional_fields,
@@ -34,12 +49,20 @@ class BaseOwaspAdminMixin:
         )
 
     def get_base_search_fields(self, *additional_fields):
-        """Get base search fields with additional fields."""
+        """
+        Construct a standard search_fields value with optional extra fields.
+
+        Args:
+            additional_fields (str): Additional field names to include.
+
+        Returns:
+            tuple[str]: A tuple combining common fields with provided additions.
+        """
         return self.search_field_names + additional_fields
 
 
 class EntityMemberInline(GenericTabularInline):
-    """EntityMember inline for admin."""
+    """Inline admin for EntityMember entries linking users to OWASP entities."""
 
     ct_field = "entity_type"
     ct_fk_field = "entity_id"
@@ -63,7 +86,7 @@ class EntityMemberInline(GenericTabularInline):
 
 
 class EntityChannelInline(GenericTabularInline):
-    """EntityChannel inline for admin."""
+    """Inline admin interface for EntityChannel records associated with an entity."""
 
     ct_field = "entity_type"
     ct_fk_field = "entity_id"
@@ -80,7 +103,20 @@ class EntityChannelInline(GenericTabularInline):
     ordering = ("platform", "channel_id")
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        """Override to add custom widget for channel_id field and limit channel_type options."""
+        """
+        Customize form widgets for EntityChannel inline fields.
+
+        - Uses a custom ChannelIdWidget for the channel_id field.
+        - Limits channel_type choices to only Slack Conversation content types.
+
+        Args:
+            db_field (Field): The model field being rendered.
+            request (HttpRequest): The current request.
+            **kwargs: Additional keyword arguments passed to the widget.
+
+        Returns:
+            FormField: The configured form field instance.
+        """
         if db_field.name == "channel_id":
             kwargs["widget"] = ChannelIdWidget()
         elif db_field.name == "channel_type":
@@ -93,14 +129,41 @@ class EntityChannelInline(GenericTabularInline):
 
 
 class GenericEntityAdminMixin(BaseOwaspAdminMixin):
-    """Mixin for generic entity admin with common entity functionality."""
+    """
+    Mixin providing common rendering logic for OWASP entity admin views.
+
+    Adds helpers for displaying GitHub and OWASP links and prefetches related
+    repositories for performance.
+    """
 
     def get_queryset(self, request):
-        """Get queryset with optimized relations."""
+        """
+        Extend the base queryset to prefetch related repositories.
+
+        This reduces SQL queries when displaying GitHub-related fields.
+
+        Args:
+            request (HttpRequest): The current admin request.
+
+        Returns:
+            QuerySet: Optimized queryset with prefetched relations.
+        """
         return super().get_queryset(request).prefetch_related("repositories")
 
     def custom_field_github_urls(self, obj):
-        """Entity GitHub URLs with uniform formatting."""
+        """
+        Render GitHub URLs for the associated entity.
+
+        Handles:
+        - Entities with multiple repositories (uses obj.repositories)
+        - Entities with a single owasp_repository field
+
+        Args:
+            obj: The entity instance.
+
+        Returns:
+            str: HTML-safe formatted GitHub links.
+        """
         if not hasattr(obj, "repositories"):
             if not hasattr(obj, "owasp_repository") or not obj.owasp_repository:
                 return ""
@@ -113,7 +176,15 @@ class GenericEntityAdminMixin(BaseOwaspAdminMixin):
         )
 
     def custom_field_owasp_url(self, obj):
-        """Entity OWASP URL with uniform formatting."""
+        """
+        Render a link to the official OWASP entity webpage.
+
+        Args:
+            obj: The entity instance.
+
+        Returns:
+            str: HTML-safe link to https://owasp.org/<entity_key>.
+        """
         if not hasattr(obj, "key") or not obj.key:
             return ""
 
@@ -122,7 +193,16 @@ class GenericEntityAdminMixin(BaseOwaspAdminMixin):
         )
 
     def _format_github_link(self, repository):
-        """Format a single GitHub repository link."""
+        """
+        Format a GitHub repository link consistently.
+
+        Args:
+            repository: A repository instance with owner.login and key attributes.
+
+        Returns:
+            str: HTML-safe anchor tag linking to the GitHub repo, or empty string
+            if required fields are missing.
+        """
         if not repository or not hasattr(repository, "owner") or not repository.owner:
             return ""
         if not hasattr(repository.owner, "login") or not repository.owner.login:
@@ -140,12 +220,27 @@ class GenericEntityAdminMixin(BaseOwaspAdminMixin):
 
 
 class StandardOwaspAdminMixin(BaseOwaspAdminMixin):
-    """Standard mixin for simple OWASP admin classes."""
+    """
+    Simple mixin for OWASP admin classes.
+
+    Provides convenient helpers for generating common admin config
+    (list_display, list_filter, search_fields).
+    """
 
     def get_common_config(
         self, extra_list_display=None, extra_search_fields=None, extra_list_filters=None
     ):
-        """Get common admin configuration to reduce boilerplate."""
+        """
+        Build a dictionary of common ModelAdmin configuration values.
+
+        Args:
+            extra_list_display (iterable[str] | None): Additional list_display fields.
+            extra_search_fields (iterable[str] | None): Additional search_fields.
+            extra_list_filters (iterable[str] | None): Additional list_filter fields.
+
+        Returns:
+            dict: A dictionary suitable for unpacking into a ModelAdmin definition.
+        """
         config = {}
 
         if extra_list_display:

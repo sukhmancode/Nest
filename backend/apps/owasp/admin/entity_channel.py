@@ -9,7 +9,20 @@ from apps.slack.models import Conversation
 
 @admin.action(description="Mark selected EntityChannels as reviewed")
 def mark_as_reviewed(_modeladmin, request, queryset):
-    """Admin action to mark selected EntityChannels as reviewed."""
+    """
+    Admin action to mark selected EntityChannel instances as reviewed.
+
+    Sets `is_reviewed=True` on all selected rows and shows a success message
+    with the number of updated records.
+
+    Args:
+        _modeladmin: The admin class that registered this action (unused).
+        request (HttpRequest): The current request object.
+        queryset (QuerySet[EntityChannel]): The selected EntityChannel queryset.
+
+    Returns:
+        None
+    """
     messages.success(
         request,
         f"Marked {queryset.update(is_reviewed=True)} EntityChannel(s) as reviewed.",
@@ -62,7 +75,20 @@ class EntityChannelAdmin(admin.ModelAdmin):
     )
 
     def channel_search_display(self, obj):
-        """Display the channel name for the selected channel."""
+        """
+        Return a human-readable channel name for display in the list view.
+
+        If the EntityChannel references a Conversation (channel_type.model == "conversation")
+        and a Conversation with the stored `channel_id` exists, returns the channel name
+        prefixed with `#`. If the referenced Conversation cannot be found, returns a
+        "not found" message. If no channel information is available, returns "-".
+
+        Args:
+            obj (EntityChannel): The EntityChannel instance.
+
+        Returns:
+            str: The display string for the channel column.
+        """
         if obj.channel_id and obj.channel_type:
             try:
                 if obj.channel_type.model == "conversation":
@@ -75,7 +101,20 @@ class EntityChannelAdmin(admin.ModelAdmin):
     channel_search_display.short_description = "Channel Name"
 
     def get_form(self, request, obj=None, **kwargs):
-        """Get the form for the EntityChannel model."""
+        """
+        Return the ModelForm class used by the admin for EntityChannel.
+
+        This method also attaches `conversation_content_type_id` to the form
+        class so the admin form can reference the ContentType id for the
+        Conversation model (used client-side or in template logic).
+
+        Args:
+            request (HttpRequest): The current request.
+            obj (EntityChannel | None): The instance being edited (or None for add).
+
+        Returns:
+            Type[ModelForm]: The form class used by this admin.
+        """
         form = super().get_form(request, obj, **kwargs)
         form.conversation_content_type_id = ContentType.objects.get_for_model(Conversation).id
 
