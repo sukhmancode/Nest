@@ -62,20 +62,8 @@ class EntityChannelAdmin(admin.ModelAdmin):
     )
 
     def channel_search_display(self, obj):
-        """
-        Return a human-readable channel name for display in the list view.
-
-        If the EntityChannel references a Conversation (channel_type.model == "conversation")
-        and a Conversation with the stored `channel_id` exists, returns the channel name
-        prefixed with `#`. If the referenced Conversation cannot be found, returns a
-        "not found" message. If no channel information is available, returns "-".
-
-        Args:
-            obj (EntityChannel): The EntityChannel instance.
-
-        Returns:
-            str: The display string for the channel column.
-        """
+      """Return the display name of the related channel for admin lists."""
+      
         if obj.channel_id and obj.channel_type:
             try:
                 if obj.channel_type.model == "conversation":
