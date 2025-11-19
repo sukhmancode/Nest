@@ -9,20 +9,7 @@ from apps.slack.models import Conversation
 
 @admin.action(description="Mark selected EntityChannels as reviewed")
 def mark_as_reviewed(_modeladmin, request, queryset):
-    """
-    Admin action to mark selected EntityChannel instances as reviewed.
-
-    Sets `is_reviewed=True` on all selected rows and shows a success message
-    with the number of updated records.
-
-    Args:
-        _modeladmin: The admin class that registered this action (unused).
-        request (HttpRequest): The current request object.
-        queryset (QuerySet[EntityChannel]): The selected EntityChannel queryset.
-
-    Returns:
-        None
-    """
+   """Mark selected EntityChannel records as reviewed."""
     messages.success(
         request,
         f"Marked {queryset.update(is_reviewed=True)} EntityChannel(s) as reviewed.",
