@@ -112,12 +112,6 @@ class GenericEntityAdminMixin(BaseOwaspAdminMixin):
         """Extend the base queryset to prefetch related repositories.
 
         This reduces SQL queries when displaying GitHub-related fields.
-
-        Args:
-            request (HttpRequest): The current admin request.
-
-        Returns:
-            QuerySet: Optimized queryset with prefetched relations.
         """
         return super().get_queryset(request).prefetch_related("repositories")
 
