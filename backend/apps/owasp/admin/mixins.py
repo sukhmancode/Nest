@@ -32,16 +32,7 @@ class BaseOwaspAdminMixin:
     )
 
     def get_base_list_display(self, *additional_fields):
-        """
-        Construct a standard list_display value with optional extra fields.
-
-        Args:
-            additional_fields (str): Additional field names to include.
-
-        Returns:
-            tuple[str]: A tuple combining name (if present), custom fields, and
-            common timestamp fields.
-        """
+        """Construct a standard list_display value with optional extra fields."""
         return tuple(
             ("name",) if hasattr(self.model, "name") else (),
             *additional_fields,
@@ -49,15 +40,7 @@ class BaseOwaspAdminMixin:
         )
 
     def get_base_search_fields(self, *additional_fields):
-        """
-        Construct a standard search_fields value with optional extra fields.
-
-        Args:
-            additional_fields (str): Additional field names to include.
-
-        Returns:
-            tuple[str]: A tuple combining common fields with provided additions.
-        """
+        """Construct a standard search_fields value with optional extra fields."""
         return self.search_field_names + additional_fields
 
 
@@ -230,9 +213,7 @@ class StandardOwaspAdminMixin(BaseOwaspAdminMixin):
     def get_common_config(
         self, extra_list_display=None, extra_search_fields=None, extra_list_filters=None
     ):
-        """
-        Build a dictionary of common ModelAdmin configuration values.
-        """
+        """Build a dictionary of common ModelAdmin configuration values."""
         config = {}
 
         if extra_list_display:

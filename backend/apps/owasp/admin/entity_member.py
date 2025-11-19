@@ -13,7 +13,7 @@ from apps.owasp.models.project import Project
 
 
 class EntityMemberAdmin(admin.ModelAdmin):
-    """Admin configuration for EntityMember records. """
+    """Admin configuration for EntityMember records."""
     
     actions = ("approve_members",)
     autocomplete_fields = ("member",)
@@ -47,7 +47,6 @@ class EntityMemberAdmin(admin.ModelAdmin):
 
         Sets `is_active=True` and `is_reviewed=True` on all selected records
         and displays a success message showing how many were updated.
-        
         """
         self.message_user(
             request,
@@ -76,10 +75,7 @@ class EntityMemberAdmin(admin.ModelAdmin):
 
     @admin.display(description="OWASP URL", ordering="entity_type")
     def owasp_url(self, obj):
-        """
-        Return a link to the OWASP site page of the linked entity.
-        
-        """
+        """Return a link to the OWASP site page of the linked entity."""
         return (
             format_html('<a href="{}" target="_blank">↗️</a>', obj.entity.owasp_url)
             if obj.entity
