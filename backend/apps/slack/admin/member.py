@@ -31,13 +31,7 @@ class MemberAdmin(admin.ModelAdmin):
         - If exactly one suggested user exists, it is assigned to the Member.
         - If multiple suggested users exist, an error message is returned because only one can be assigned.
         - If none exist, a warning message is shown.
-
-        Args:
-            request (HttpRequest): The current HTTP request.
-            queryset (QuerySet[Member]): The selected Member objects.
-
-        Returns:
-            None
+        
         """
         for entity in queryset:
             suggestions = entity.suggested_users.all()

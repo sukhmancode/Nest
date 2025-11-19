@@ -78,12 +78,6 @@ class MemberProfileAdmin(admin.ModelAdmin):
         This override applies `select_related("github_user")` to reduce the
         number of SQL queries when displaying MemberProfile entries that include
         related GitHub user information.
-
-        Args:
-            request (HttpRequest): The current admin request.
-
-        Returns:
-            QuerySet[MemberProfile]: The optimized queryset with related user data.
         """
         queryset = super().get_queryset(request)
         return queryset.select_related("github_user")

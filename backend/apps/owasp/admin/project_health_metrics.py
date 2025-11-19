@@ -34,12 +34,7 @@ class ProjectHealthMetricsAdmin(admin.ModelAdmin, StandardOwaspAdminMixin):
 
         Used in the admin list view to show a readable project label instead
         of the raw project foreign key reference.
-
-        Args:
-            obj (ProjectHealthMetrics): The metrics instance.
-
-        Returns:
-            str: The project name, or "N/A" if no project is assigned.
+        
         """
         return obj.project.name if obj.project else "N/A"
 

@@ -60,12 +60,6 @@ class ProjectAdmin(admin.ModelAdmin, GenericEntityAdminMixin):
         If the project has a defined `name`, it is shown; otherwise the project
         key is used as a fallback. This ensures that every project row has a
         readable identifier even when optional fields are empty.
-
-        Args:
-            obj (Project): The project instance.
-
-        Returns:
-            str: The readable project label.
         """
         return f"{obj.name or obj.key}"
 

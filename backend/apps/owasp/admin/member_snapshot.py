@@ -114,12 +114,6 @@ class MemberSnapshotAdmin(admin.ModelAdmin):
         Adds `select_related("github_user")` to reduce SQL queries by fetching
         related GitHub user data in a single query. This improves performance
         when displaying snapshots with user information.
-
-        Args:
-            request (HttpRequest): The current admin request.
-
-        Returns:
-            QuerySet[MemberSnapshot]: Optimized queryset with related user data.
         """
         queryset = super().get_queryset(request)
         return queryset.select_related("github_user")

@@ -13,12 +13,7 @@ from apps.owasp.models.project import Project
 
 
 class EntityMemberAdmin(admin.ModelAdmin):
-    """
-    Admin configuration for EntityMember records.
-
-    EntityMember links a person (Member) to any OWASP entity such as
-    Projects, Chapters, or Committees.
-    """
+    """Admin configuration for EntityMember records. """
     
     actions = ("approve_members",)
     autocomplete_fields = ("member",)
@@ -52,13 +47,7 @@ class EntityMemberAdmin(admin.ModelAdmin):
 
         Sets `is_active=True` and `is_reviewed=True` on all selected records
         and displays a success message showing how many were updated.
-
-        Args:
-            request (HttpRequest): The current request.
-            queryset (QuerySet[EntityMember]): The selected members to approve.
-
-        Returns:
-            None
+        
         """
         self.message_user(
             request,
@@ -71,12 +60,6 @@ class EntityMemberAdmin(admin.ModelAdmin):
         Return a clickable admin link to the related entity.
 
         Example output: a link to the Project/Chapter/Committee admin change page.
-
-        Args:
-            obj (EntityMember): The EntityMember instance.
-
-        Returns:
-            str: HTML anchor tag or '-' if no entity is assigned.
         """
         return (
             format_html(
@@ -95,12 +78,7 @@ class EntityMemberAdmin(admin.ModelAdmin):
     def owasp_url(self, obj):
         """
         Return a link to the OWASP site page of the linked entity.
-
-        Args:
-            obj (EntityMember): The EntityMember instance.
-
-        Returns:
-            str: HTML anchor tag linking to the entity’s OWASP page, or '-'.
+        
         """
         return (
             format_html('<a href="{}" target="_blank">↗️</a>', obj.entity.owasp_url)
@@ -118,14 +96,6 @@ class EntityMemberAdmin(admin.ModelAdmin):
         - Committee name or key
 
         and includes matching EntityMember rows in the results.
-
-        Args:
-            request (HttpRequest): The current request.
-            queryset (QuerySet): Initial queryset.
-            search_term (str): The text entered in the search field.
-
-        Returns:
-            tuple[QuerySet, bool]: Updated queryset and distinct flag.
         """
         queryset, use_distinct = super().get_search_results(request, queryset, search_term)
 

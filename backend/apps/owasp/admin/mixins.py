@@ -232,14 +232,6 @@ class StandardOwaspAdminMixin(BaseOwaspAdminMixin):
     ):
         """
         Build a dictionary of common ModelAdmin configuration values.
-
-        Args:
-            extra_list_display (iterable[str] | None): Additional list_display fields.
-            extra_search_fields (iterable[str] | None): Additional search_fields.
-            extra_list_filters (iterable[str] | None): Additional list_filter fields.
-
-        Returns:
-            dict: A dictionary suitable for unpacking into a ModelAdmin definition.
         """
         config = {}
 
