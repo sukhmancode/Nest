@@ -42,8 +42,7 @@ class EntityMemberAdmin(admin.ModelAdmin):
 
     @admin.action(description="Approve selected members")
     def approve_members(self, request, queryset):
-        """
-        Admin action to approve selected entity members.
+        """Admin action to approve selected entity members.
 
         Sets `is_active=True` and `is_reviewed=True` on all selected records
         and displays a success message showing how many were updated.
@@ -55,8 +54,7 @@ class EntityMemberAdmin(admin.ModelAdmin):
 
     @admin.display(description="Entity", ordering="entity_type")
     def entity(self, obj):
-        """
-        Return a clickable admin link to the related entity.
+        """Return a clickable admin link to the related entity.
 
         Example output: a link to the Project/Chapter/Committee admin change page.
         """
@@ -83,8 +81,7 @@ class EntityMemberAdmin(admin.ModelAdmin):
         )
 
     def get_search_results(self, request, queryset, search_term):
-        """
-        Extend default search to also match entity names and keys.
+        """Extend default search to also match entity names and keys.
 
         In addition to the built-in search, this method searches:
         - Project name or key

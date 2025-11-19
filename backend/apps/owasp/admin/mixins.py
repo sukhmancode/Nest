@@ -12,8 +12,7 @@ from apps.slack.models.conversation import Conversation
 
 
 class BaseOwaspAdminMixin:
-    """
-    Base mixin for OWASP admin classes.
+    """Base mixin for OWASP admin classes.
 
     Provides common configuration patterns—such as default list_display,
     list_filter, and search_fields—so individual ModelAdmin classes can avoid
@@ -86,19 +85,10 @@ class EntityChannelInline(GenericTabularInline):
     ordering = ("platform", "channel_id")
 
     def formfield_for_dbfield(self, db_field, request, **kwargs):
-        """
-        Customize form widgets for EntityChannel inline fields.
+        """Customize form widgets for EntityChannel inline fields.
 
         - Uses a custom ChannelIdWidget for the channel_id field.
         - Limits channel_type choices to only Slack Conversation content types.
-
-        Args:
-            db_field (Field): The model field being rendered.
-            request (HttpRequest): The current request.
-            **kwargs: Additional keyword arguments passed to the widget.
-
-        Returns:
-            FormField: The configured form field instance.
         """
         if db_field.name == "channel_id":
             kwargs["widget"] = ChannelIdWidget()
@@ -112,16 +102,14 @@ class EntityChannelInline(GenericTabularInline):
 
 
 class GenericEntityAdminMixin(BaseOwaspAdminMixin):
-    """
-    Mixin providing common rendering logic for OWASP entity admin views.
+    """Mixin providing common rendering logic for OWASP entity admin views.
 
     Adds helpers for displaying GitHub and OWASP links and prefetches related
     repositories for performance.
     """
 
     def get_queryset(self, request):
-        """
-        Extend the base queryset to prefetch related repositories.
+        """Extend the base queryset to prefetch related repositories.
 
         This reduces SQL queries when displaying GitHub-related fields.
 
@@ -134,18 +122,11 @@ class GenericEntityAdminMixin(BaseOwaspAdminMixin):
         return super().get_queryset(request).prefetch_related("repositories")
 
     def custom_field_github_urls(self, obj):
-        """
-        Render GitHub URLs for the associated entity.
+        """Render GitHub URLs for the associated entity.
 
         Handles:
         - Entities with multiple repositories (uses obj.repositories)
         - Entities with a single owasp_repository field
-
-        Args:
-            obj: The entity instance.
-
-        Returns:
-            str: HTML-safe formatted GitHub links.
         """
         if not hasattr(obj, "repositories"):
             if not hasattr(obj, "owasp_repository") or not obj.owasp_repository:
@@ -159,15 +140,7 @@ class GenericEntityAdminMixin(BaseOwaspAdminMixin):
         )
 
     def custom_field_owasp_url(self, obj):
-        """
-        Render a link to the official OWASP entity webpage.
-
-        Args:
-            obj: The entity instance.
-
-        Returns:
-            str: HTML-safe link to https://owasp.org/<entity_key>.
-        """
+        """Render a link to the official OWASP entity webpage."""
         if not hasattr(obj, "key") or not obj.key:
             return ""
 
@@ -176,16 +149,7 @@ class GenericEntityAdminMixin(BaseOwaspAdminMixin):
         )
 
     def _format_github_link(self, repository):
-        """
-        Format a GitHub repository link consistently.
-
-        Args:
-            repository: A repository instance with owner.login and key attributes.
-
-        Returns:
-            str: HTML-safe anchor tag linking to the GitHub repo, or empty string
-            if required fields are missing.
-        """
+        """Format a GitHub repository link consistently."""
         if not repository or not hasattr(repository, "owner") or not repository.owner:
             return ""
         if not hasattr(repository.owner, "login") or not repository.owner.login:
@@ -203,8 +167,7 @@ class GenericEntityAdminMixin(BaseOwaspAdminMixin):
 
 
 class StandardOwaspAdminMixin(BaseOwaspAdminMixin):
-    """
-    Simple mixin for OWASP admin classes.
+    """Simple mixin for OWASP admin classes.
 
     Provides convenient helpers for generating common admin config
     (list_display, list_filter, search_fields).
